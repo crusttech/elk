@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  elk:
+    image: sebp/elk
+    volumes:
+      - elk-data:/var/lib/elasticsearch
+      - ./logstash:/etc/logstash/conf.d:ro
+    restart: on-failure
+    ports:
+      - 127.0.0.1:12201:12201
+    environment:
+      VIRTUAL_HOST:     ${HOSTNAME}
+      VIRTUAL_PORT:     5601
+      LETSENCRYPT_HOST: ${HOSTNAME}
+    hostname: ${HOSTNAME}
+    networks:
+      - party
+
+networks:
+  party:
+    external: true
+
+volumes:
+    elk-data:
+        driver: local
+
