@@ -1,27 +1,21 @@
-version: '3.1'
+version: '3.5'
 
 services:
   elk:
-    image: sebp/elk
+    container_name: ${HOSTNAME}
+    image: cortezaproject/elk:latest
     volumes:
       - elk-data:/var/lib/elasticsearch
-      - ./logstash:/etc/logstash/conf.d:ro
     restart: on-failure
-    ports:
-      - 127.0.0.1:12201:12201
     environment:
       VIRTUAL_HOST:     ${HOSTNAME}
       VIRTUAL_PORT:     5601
       LETSENCRYPT_HOST: ${HOSTNAME}
     hostname: ${HOSTNAME}
-    networks:
-      - party
+    networks: [ proxy, elk ]
 
 networks:
-  party:
-    external: true
+  proxy: { external: true }
+  elk: { name: elk }
 
-volumes:
-    elk-data:
-        driver: local
-
+volumes: { elk-data: { driver: local } }
